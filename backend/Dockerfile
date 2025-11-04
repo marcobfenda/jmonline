@@ -32,5 +32,11 @@ COPY apache-config.conf /etc/apache2/sites-available/000-default.conf
 
 EXPOSE 80
 
-# Start Apache
-CMD ["apache2-foreground"]
+# Create startup script that runs setup_users.php then starts Apache
+RUN echo '#!/bin/bash' > /usr/local/bin/start.sh && \
+    echo 'php setup_users.php' >> /usr/local/bin/start.sh && \
+    echo 'exec apache2-foreground' >> /usr/local/bin/start.sh && \
+    chmod +x /usr/local/bin/start.sh
+
+# Start Apache (after running setup script)
+CMD ["/usr/local/bin/start.sh"]

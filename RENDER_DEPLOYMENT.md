@@ -44,16 +44,9 @@ If you prefer to set up services manually:
 2. Connect your GitHub repository
 3. Configure:
    - **Name**: `jmonline-api`
-   - **Environment**: `PHP`
-   - **Build Command**: 
-     ```bash
-     mkdir -p uploads && chmod 755 uploads
-     ```
-   - **Start Command**: 
-     ```bash
-     php setup_users.php && apache2-foreground
-     ```
-   - **Root Directory**: `backend`
+   - **Environment**: `Docker`
+   - **Dockerfile Path**: `backend/Dockerfile`
+   - **Docker Context**: `backend`
    - **Plan**: Starter (or higher)
 
 4. **Environment Variables**:

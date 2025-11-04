@@ -19,10 +19,9 @@
 
 **1. Backend API Service:**
 - Type: Web Service
-- Environment: PHP
-- Root Directory: `backend`
-- Build Command: `bash backend/render-build.sh`
-- Start Command: `php setup_users.php && apache2-foreground`
+- Environment: Docker
+- Dockerfile Path: `backend/Dockerfile`
+- Docker Context: `backend`
 
 **2. Frontend Static Site:**
 - Type: Static Site  

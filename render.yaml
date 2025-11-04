@@ -1,11 +1,11 @@
 services:
-  # Backend PHP API Service
+  # Backend PHP API Service (using Docker)
   - type: web
     name: jmonline-api
-    runtime: php
+    runtime: docker
     plan: starter
-    buildCommand: bash backend/render-build.sh
-    startCommand: php setup_users.php && apache2-foreground
+    dockerfilePath: backend/Dockerfile
+    dockerContext: backend
     envVars:
       - key: DB_HOST
         sync: false
@@ -15,10 +15,7 @@ services:
         sync: false
       - key: DB_PASS
         sync: false
-      - key: PHP_VERSION
-        value: 8.2
     healthCheckPath: /api/index.php
-    rootDir: backend
 
   # Frontend React Static Site
   - type: web
