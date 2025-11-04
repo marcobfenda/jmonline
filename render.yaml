@@ -3,7 +3,7 @@ services:
   - type: web
     name: jmonline-api
     runtime: docker
-    plan: starter
+    # Free tier - remove 'plan' property or use 'free'
     dockerfilePath: backend/Dockerfile
     dockerContext: backend
     envVars:
@@ -21,7 +21,7 @@ services:
   - type: web
     name: jmonline-frontend
     runtime: static
-    plan: starter
+    # Free tier - static sites are always free
     buildCommand: |
       cd frontend && npm install && npm run build
     staticPublishPath: frontend/build
@@ -38,9 +38,10 @@ services:
   # Uncomment and configure based on your choice:
   
   # Option A: PostgreSQL (Render's managed database)
+  # Note: Free tier databases are available but have limitations
   # - type: pserv
   #   name: jmonline-database
-  #   plan: starter
+  #   # Free tier - remove 'plan' property
   #   databaseName: jmonline
   #   databaseUser: jmonline_user
   
