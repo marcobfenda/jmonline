@@ -1,0 +1,55 @@
+services:
+  # Backend PHP API Service
+  - type: web
+    name: jmonline-api
+    runtime: php
+    plan: starter
+    buildCommand: bash backend/render-build.sh
+    startCommand: php setup_users.php && apache2-foreground
+    envVars:
+      - key: DB_HOST
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASS
+        sync: false
+      - key: PHP_VERSION
+        value: 8.2
+    healthCheckPath: /api/index.php
+    rootDir: backend
+
+  # Frontend React Static Site
+  - type: web
+    name: jmonline-frontend
+    runtime: static
+    plan: starter
+    buildCommand: |
+      cd frontend && npm install && npm run build
+    staticPublishPath: frontend/build
+    envVars:
+      - key: REACT_APP_API_URL
+        sync: false
+        # Set this to your backend service URL after deployment
+        # Format: https://jmonline-api.onrender.com/api
+
+  # Database Service
+  # Note: Render supports PostgreSQL by default. For MySQL, you'll need to:
+  # 1. Use an external MySQL service (PlanetScale, Aiven, etc.), OR
+  # 2. Adapt your code to use PostgreSQL
+  # Uncomment and configure based on your choice:
+  
+  # Option A: PostgreSQL (Render's managed database)
+  # - type: pserv
+  #   name: jmonline-database
+  #   plan: starter
+  #   databaseName: jmonline
+  #   databaseUser: jmonline_user
+  
+  # Option B: External MySQL - Configure environment variables in API service:
+  # DB_HOST=<external-mysql-host>
+  # DB_NAME=jmonline
+  # DB_USER=jmonline_user
+  # DB_PASS=<external-mysql-password>
+
