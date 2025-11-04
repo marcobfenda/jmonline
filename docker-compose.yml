@@ -1,0 +1,69 @@
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: jmonline_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: jmonline
+      MYSQL_USER: jmonline_user
+      MYSQL_PASSWORD: jmonline_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - jmonline_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  php:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: jmonline_php
+    volumes:
+      - ./backend:/var/www/html
+      - ./backend/uploads:/var/www/html/uploads
+    ports:
+      - "8082:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - jmonline_network
+    environment:
+      DB_HOST: mysql
+      DB_NAME: jmonline
+      DB_USER: jmonline_user
+      DB_PASS: jmonline_pass
+    command: >
+      sh -c "sleep 10 && php setup_users.php && apache2-foreground"
+
+  react:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: jmonline_react
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      - php
+    networks:
+      - jmonline_network
+    environment:
+      REACT_APP_API_URL: http://localhost:8082/api
+
+volumes:
+  mysql_data:
+
+networks:
+  jmonline_network:
+    driver: bridge
+
