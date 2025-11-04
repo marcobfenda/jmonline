@@ -4,20 +4,24 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Get the origin from the request
-$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : 'http://localhost:3000';
+// Handle CORS - allow all origins for development
+$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '*';
 
-// Allow credentials and set specific origin
-header('Content-Type: application/json');
+// Set CORS headers
 header('Access-Control-Allow-Origin: ' . $origin);
 header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+header('Access-Control-Max-Age: 3600');
 
+// Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
+
+// Set content type for actual requests
+header('Content-Type: application/json');
 
 require_once '../config/database.php';
 require_once '../models/User.php';
